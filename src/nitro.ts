@@ -1,7 +1,5 @@
 
-
-// Sample secret words
-const secretWords = [
+const secretWords: string[] = [
   "apple",
   "banana",
   "cherry",
@@ -13,84 +11,49 @@ const secretWords = [
   "kiwi",
   "lemon",
   "mango",
-  "nectarine",
-  "orange",
-  "papaya",
-  "quince",
-  "raspberry",
-  "strawberry",
-  "tangerine",
-  "watermelon",
   "pineapple"
 ];
 
-// Function to transform a word
-function transformWord(word, transformations) {
-  let transformedWord = word;
+function transformWord(word: string, transformation: string): string | number {
+  let transformedWord: string | number = word;
 
-  for (const transformation of transformations) {
-    switch (transformation) {
-      case "remove-vowels":
-        transformedWord = transformedWord.replace(/[aeiou]/gi, "");
-        break;
-      // Add more transformation rules as needed
-    }
-
-    switch (transformation) {
-      case "remove-vowels":
-        return word.replace(/[aeiou]/gi, "");
-      case "count-vowels":
-        return word.match(/[aeiou]/gi).length;
-      case "count-consonants":
-        return word.match(/[b-df-hj-np-tv-z]/gi).length;
-      case "reverse":
-        return word.split('').reverse().join('');
-      default:
-        return word;
-    }
+  switch (transformation) {
+    case "remove-vowels":
+      transformedWord = (transformedWord as string).replace(/[aeiou]/gi, "");
+      break;
+    case "count-vowels":
+      transformedWord = (transformedWord as string).match(/[aeiou]/gi)?.length || 0;
+      break;
+    case "count-consonants":
+      transformedWord = (transformedWord as string).match(/[b-df-hj-np-tv-z]/gi)?.length || 0;
+      break;
+    case "reverse":
+      transformedWord = (transformedWord as string).split('').reverse().join('');
+      break;
+    default:
+      break;
   }
 
   return transformedWord;
 }
 
-// Sample user data
-const users = [
-  {
-    username: "user1",
-    secretWords: getRandomWords(5) // Get 5 random words
-  }
-];
-
-// Function to get random words from the secretWords array and apply random transformations
-function getRandomWords(count) {
-  const randomWords = [];
-  const shuffledWords = [...secretWords]; // Create a copy to shuffle
-
-  for (let i = 0; i < count; i++) {
-    const randomIndex = Math.floor(Math.random() * shuffledWords.length);
-    const randomWord = shuffledWords.splice(randomIndex, 1)[0];
-
-    // Apply random transformations to the word
-    const transformations = getRandomTransformations();
-    const transformedWord = transformWord(randomWord, transformations);
-
-    randomWords.push(transformedWord);
-  }
-
-  return randomWords;
+function getRandomIndex() {
+  return Math.floor(Math.random() * secretWords.length);
 }
 
-// Function to get a random set of transformations
-function getRandomTransformations() {
-  const availableTransformations = ["remove-vowels"];
-  const transformations = [];
-  const numTransformations = Math.floor(Math.random() * availableTransformations.length) + 1;
-
-  for (let i = 0; i < numTransformations; i++) {
-    const randomIndex = Math.floor(Math.random() * availableTransformations.length);
-    transformations.push(availableTransformations[randomIndex]);
-  }
-
-  return transformations;
+function getRandomTransformation() {
+  const availableTransformations: string[] = ["remove-vowels", "count-vowels", "count-consonants", "reverse"];
+  const randomIndex: number = Math.floor(Math.random() * availableTransformations.length);
+  return availableTransformations[randomIndex];
 }
+
+const randomIndex = getRandomIndex();
+const wordToTransform = secretWords[randomIndex];
+const selectedTransformation = getRandomTransformation();
+
+console.log(`Na lista de 12 palavras, a palavra número ${randomIndex + 1}, "${wordToTransform}", após a transformação "${selectedTransformation}" fica:`);
+
+const transformedWord = transformWord(wordToTransform, selectedTransformation);
+console.log(transformedWord);
+
 
