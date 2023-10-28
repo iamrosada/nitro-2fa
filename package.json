@@ -1,0 +1,14 @@
+{
+  "name": "nitro-crypto",
+  "version": "0.0.1",
+  "description": "Nitro crypto is 2FA modele with words",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "type": "./dist/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["2FA"],
+  "author": "Luis de Água Rosada",
+  "license": "MIT"
+}
