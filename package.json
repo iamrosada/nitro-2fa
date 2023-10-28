@@ -4,11 +4,17 @@
   "description": "Nitro crypto is 2FA modele with words",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
-  "type": "./dist/index.d.ts",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsup"
   },
-  "keywords": ["2FA"],
+  "keywords": [
+    "2FA"
+  ],
   "author": "Luis de Água Rosada",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "tsup": "^7.2.0",
+    "typescript": "^5.2.2"
+  }
 }
