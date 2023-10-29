@@ -1,42 +1,83 @@
+
 import * as readline from 'readline';
+import * as path from 'path';
+import * as fs from 'fs';
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
-const secretWords: string[] = [
-  "apple",
-  "banana",
-  "cherry",
-  "date",
-  "elderberry",
-  "fig",
-  "grape",
-  "honeydew",
-  "kiwi",
-  "lemon",
-  "mango",
-  "pineapple"
-];
+function readWordsFromFile(filename: string, length: number, count: number): string[] {
+  const filePath = path.join(__dirname, filename);
+  try {
+    const content = fs.readFileSync(filePath, 'utf-8');
 
-function chooseTheWayToCallTheArray(choose){
+    const words = content.split(' ').map(word => word.replace(/[^a-zA-Z]/g, ''));
 
-  switch(choose){
-    case "by-user-array":
-      return
+    // Filter words by length and keep only unique ones
+    const uniqueWords = new Set<string>();
+    words.forEach(word => {
+      if (word.length <= length) {
+        uniqueWords.add(word);
+      }
+    });
 
+    // Convert the Set back to an array
+    const uniqueWordsArray = Array.from(uniqueWords);
+
+    // Shuffle the array of words randomly
+    for (let i = uniqueWordsArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [uniqueWordsArray[i], uniqueWordsArray[j]] = [uniqueWordsArray[j], uniqueWordsArray[i]];
+    }
+
+    // Get the specified number of words after shuffling
+    return uniqueWordsArray.slice(0, count);
+  } catch (error) {
+    console.error(`Error reading file "${filePath}": ${error.message}`);
+    return [];
   }
-
 }
-function transformWord(word: string, transformation: string): string | number {
+
+
+function chooseWordSource(source: 'file' | 'array'): string[] {
+  if (source === 'file') {
+    // Read words from a file
+    const numberOfWordsToRead = 12;
+    const wordLength = 6;
+    return readWordsFromFile('palavras.txt', wordLength, numberOfWordsToRead);
+  } else if (source === 'array') {
+    // Define your array of words here
+    return [
+      "apple",
+      "banana",
+      "cherry",
+      "date",
+      "elderberry",
+      "fig",
+      "grape",
+      "honeydew",
+      "kiwi",
+      "lemon",
+      "mango",
+      "pineapple"
+    ];
+  } else {
+    return [];
+  }
+}
+
+function transformWord(word: string, transformation: string): string {
   switch (transformation) {
     case "remove-vowels":
       return word.replace(/[aeiou]/gi, "");
     case "count-vowels":
-      return (word.match(/[aeiou]/gi) || []).length;
+      const count = (word.match(/[aeiou]/gi) || []).length;
+      return `Number of vowels: ${count}`;
     case "count-consonants":
-      return (word.match(/[b-df-hj-np-tv-z]/gi) || []).length;
+      const consonants = (word.match(/[b-df-hj-np-tv-z]/gi) || []).join('');
+      return `Consonants: ${consonants}`;
     case "reverse":
       return word.split('').reverse().join('');
     default:
@@ -44,45 +85,42 @@ function transformWord(word: string, transformation: string): string | number {
   }
 }
 
-function getRandomIndex() {
-  return Math.floor(Math.random() * secretWords.length);
-}
-
-function getRandomTransformation() {
+function getRandomTransformation(): string {
   const availableTransformations: string[] = ["remove-vowels", "count-vowels", "count-consonants", "reverse"];
   const randomIndex: number = Math.floor(Math.random() * availableTransformations.length);
   return availableTransformations[randomIndex];
 }
 
-function displayTransformationInfo(word: string, transformation: string) {
+function displayTransformationInfo(word: string, transformation: string, randomIndex: number) {
   switch (transformation) {
     case "remove-vowels":
-      console.log(`If I remove the vowels from the word "${word}", it will be:`);
+      console.log(`IF I REMOVE THE VOWELS FROM THE WORD IN THIS POSITION ${randomIndex + 1}, IT WILL BE: ${word}`);
       break;
     case "count-vowels":
-      console.log(`If I count the vowels in the word "${word}", the value is:`);
+      console.log(`IF I COUNT THE VOWELS IN THE WORD IN THIS POSITION ${randomIndex + 1}, THE VALUE IS: ${word}`);
       break;
     case "count-consonants":
-      console.log(`If I count the consonants in the word "${word}", the value is:`);
+      console.log(`IF I COUNT THE CONSONANTS IN THE WORD IN THIS POSITION ${randomIndex + 1}, THE VALUE IS: ${word}`);
       break;
     case "reverse":
-      console.log(`If the word "${word}" is reversed, it will be:`);
+      console.log(`IF THE WORD IN POSITION ${randomIndex + 1} IS REVERSED, IT WILL BE: ${word}`);
       break;
     default:
       break;
   }
 }
 
-function startGame() {
-  const randomIndex = getRandomIndex();
-  const wordToTransform = secretWords[randomIndex];
-  const selectedTransformation = getRandomTransformation();
+function playGame(words: string[]) {
+  const randomIndex = Math.floor(Math.random() * words.length);
+  const wordToTransform = words[randomIndex];
+  const selectedTransformation = getRandomTransformation(); // Choose a random transformation
 
-  displayTransformationInfo(wordToTransform, selectedTransformation);
+  console.log(`Word: ${wordToTransform}`);
+  displayTransformationInfo(wordToTransform, selectedTransformation, randomIndex);
 
   rl.question('Enter your answer: ', (answer) => {
     const transformedValue = transformWord(wordToTransform, selectedTransformation);
-    const transformedWord = typeof transformedValue === 'string' ? transformedValue.toLowerCase() : String(transformedValue);
+    const transformedWord = typeof transformedValue === 'string' ? transformedValue.toLowerCase() : transformedValue;
 
     if (answer.toLowerCase() === transformedWord) {
       console.log("Your answer is correct!");
@@ -92,14 +130,182 @@ function startGame() {
 
     rl.question('Do you want to play again? (yes/no): ', (playAgain) => {
       if (playAgain.toLowerCase() === 'yes') {
-        startGame(); // Restart the game
+        playGame(words);
       } else {
-        rl.close(); // Close the readline interface
+        rl.close();
       }
     });
   });
 }
 
+function startGame() {
+  rl.question('Choose the source of words (file/array): ', (source) => {
+    if (source === 'file' || source === 'array') {
+      const words = chooseWordSource(source);
+      if (words.length > 0) {
+        playGame(words);
+      } else {
+        console.log('No words were read or provided.');
+      }
+    } else {
+      console.log('Invalid source. Choose "file" or "array".');
+    }
+  });
+}
+
 startGame();
 
+// import * as readline from 'readline';
+// import * as path from 'path';
+// import * as fs from 'fs';
 
+// const rl = readline.createInterface({
+//   input: process.stdin,
+//   output: process.stdout
+// });
+
+// function readWordsFromFile(filename: string, length: number, count: number): string[] {
+//   const filePath = path.join(__dirname, filename);
+//   try {
+//     const content = fs.readFileSync(filePath, 'utf-8');
+
+//     const words = content.split(' ').map(word => word.replace(/[^a-zA-Z]/g, ''));
+
+//     // Filter words by length and keep only unique ones
+//     const uniqueWords = new Set<string>();
+//     words.forEach(word => {
+//       if (word.length <= length) {
+//         uniqueWords.add(word);
+//       }
+//     });
+
+//     // Convert the Set back to an array
+//     const uniqueWordsArray = Array.from(uniqueWords);
+
+//     // Shuffle the array of words randomly
+//     for (let i = uniqueWordsArray.length - 1; i > 0; i--) {
+//       const j = Math.floor(Math.random() * (i + 1));
+//       [uniqueWordsArray[i], uniqueWordsArray[j]] = [uniqueWordsArray[j], uniqueWordsArray[i]];
+//     }
+
+//     // Get the specified number of words after shuffling
+//     return uniqueWordsArray.slice(0, count);
+//   } catch (error) {
+//     console.error(`Error reading file "${filePath}": ${error.message}`);
+//     return [];
+//   }
+// }
+
+// function chooseWordSource(source: 'file' | 'array'): string[] {
+//   if (source === 'file') {
+//     // Read words from a file
+//     const numberOfWordsToRead = 12;
+//     const wordLength = 6;
+//     return readWordsFromFile('palavras.txt', wordLength, numberOfWordsToRead);
+//   } else if (source === 'array') {
+//     // Define your array of words here
+//     return [
+//       "apple",
+//       "banana",
+//       "cherry",
+//       "date",
+//       "elderberry",
+//       "fig",
+//       "grape",
+//       "honeydew",
+//       "kiwi",
+//       "lemon",
+//       "mango",
+//       "pineapple"
+//     ];
+//   } else {
+//     return [];
+//   }
+// }
+
+// function transformWord(word: string, transformation: string): string {
+//   switch (transformation) {
+//     case "remove-vowels":
+//       return word.replace(/[aeiou]/gi, "");
+//     case "count-vowels":
+//       const count = (word.match(/[aeiou]/gi) || []).length;
+//       return `Number of vowels: ${count}`;
+//     case "count-consonants":
+//       const consonants = (word.match(/[b-df-hj-np-tv-z]/gi) || []).join('');
+//       return `Consonants: ${consonants}`;
+//     case "reverse":
+//       return word.split('').reverse().join('');
+//     default:
+//       return word;
+//   }
+// }
+
+// function getRandomTransformation(): string {
+//   const availableTransformations: string[] = ["remove-vowels", "count-vowels", "count-consonants", "reverse"];
+//   const randomIndex: number = Math.floor(Math.random() * availableTransformations.length);
+//   return availableTransformations[randomIndex];
+// }
+
+// function displayTransformationInfo(word: string, transformation: string) {
+//   switch (transformation) {
+//     case "remove-vowels":
+//       console.log(`If I remove the vowels from the word "${word}", it will be:`);
+//       break;
+//     case "count-vowels":
+//       console.log(`If I count the vowels in the word "${word}", the value is:`);
+//       break;
+//     case "count-consonants":
+//       console.log(`If I count the consonants in the word "${word}", the value is:`);
+//       break;
+//     case "reverse":
+//       console.log(`If the word "${word}" is reversed, it will be:`);
+//       break;
+//     default:
+//       break;
+//   }
+// }
+
+// function playGame(words: string[]) {
+//   const randomIndex = Math.floor(Math.random() * words.length);
+//   const wordToTransform = words[randomIndex];
+//   const selectedTransformation = getRandomTransformation(); // Choose a random transformation
+
+//   console.log(`Word: ${wordToTransform}`);
+//   displayTransformationInfo(wordToTransform, selectedTransformation);
+
+//   rl.question('Enter your answer: ', (answer) => {
+//     const transformedValue = transformWord(wordToTransform, selectedTransformation);
+//     const transformedWord = typeof transformedValue === 'string' ? transformedValue.toLowerCase() : transformedValue;
+
+//     if (answer.toLowerCase() === transformedWord) {
+//       console.log("Your answer is correct!");
+//     } else {
+//       console.log("Your answer is incorrect. The correct answer is:", transformedValue);
+//     }
+
+//     rl.question('Do you want to play again? (yes/no): ', (playAgain) => {
+//       if (playAgain.toLowerCase() === 'yes') {
+//         playGame(words);
+//       } else {
+//         rl.close();
+//       }
+//     });
+//   });
+// }
+
+// function startGame() {
+//   rl.question('Choose the source of words (file/array): ', (source) => {
+//     if (source === 'file' || source === 'array') {
+//       const words = chooseWordSource(source);
+//       if (words.length > 0) {
+//         playGame(words);
+//       } else {
+//         console.log('No words were read or provided.');
+//       }
+//     } else {
+//       console.log('Invalid source. Choose "file" or "array".');
+//     }
+//   });
+// }
+
+// startGame();
