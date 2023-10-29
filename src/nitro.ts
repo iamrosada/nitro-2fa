@@ -1,3 +1,9 @@
+import * as readline from 'readline';
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
 const secretWords: string[] = [
   "apple",
@@ -14,27 +20,28 @@ const secretWords: string[] = [
   "pineapple"
 ];
 
-function transformWord(word: string, transformation: string): string | number {
-  let transformedWord: string | number = word;
+function chooseTheWayToCallTheArray(choose){
 
-  switch (transformation) {
-    case "remove-vowels":
-      transformedWord = (transformedWord as string).replace(/[aeiou]/gi, "");
-      break;
-    case "count-vowels":
-      transformedWord = (transformedWord as string).match(/[aeiou]/gi)?.length || 0;
-      break;
-    case "count-consonants":
-      transformedWord = (transformedWord as string).match(/[b-df-hj-np-tv-z]/gi)?.length || 0;
-      break;
-    case "reverse":
-      transformedWord = (transformedWord as string).split('').reverse().join('');
-      break;
-    default:
-      break;
+  switch(choose){
+    case "by-user-array":
+      return
+
   }
 
-  return transformedWord;
+}
+function transformWord(word: string, transformation: string): string | number {
+  switch (transformation) {
+    case "remove-vowels":
+      return word.replace(/[aeiou]/gi, "");
+    case "count-vowels":
+      return (word.match(/[aeiou]/gi) || []).length;
+    case "count-consonants":
+      return (word.match(/[b-df-hj-np-tv-z]/gi) || []).length;
+    case "reverse":
+      return word.split('').reverse().join('');
+    default:
+      return word;
+  }
 }
 
 function getRandomIndex() {
@@ -47,13 +54,52 @@ function getRandomTransformation() {
   return availableTransformations[randomIndex];
 }
 
-const randomIndex = getRandomIndex();
-const wordToTransform = secretWords[randomIndex];
-const selectedTransformation = getRandomTransformation();
+function displayTransformationInfo(word: string, transformation: string) {
+  switch (transformation) {
+    case "remove-vowels":
+      console.log(`If I remove the vowels from the word "${word}", it will be:`);
+      break;
+    case "count-vowels":
+      console.log(`If I count the vowels in the word "${word}", the value is:`);
+      break;
+    case "count-consonants":
+      console.log(`If I count the consonants in the word "${word}", the value is:`);
+      break;
+    case "reverse":
+      console.log(`If the word "${word}" is reversed, it will be:`);
+      break;
+    default:
+      break;
+  }
+}
 
-console.log(`Na lista de 12 palavras, a palavra número ${randomIndex + 1}, "${wordToTransform}", após a transformação "${selectedTransformation}" fica:`);
+function startGame() {
+  const randomIndex = getRandomIndex();
+  const wordToTransform = secretWords[randomIndex];
+  const selectedTransformation = getRandomTransformation();
 
-const transformedWord = transformWord(wordToTransform, selectedTransformation);
-console.log(transformedWord);
+  displayTransformationInfo(wordToTransform, selectedTransformation);
+
+  rl.question('Enter your answer: ', (answer) => {
+    const transformedValue = transformWord(wordToTransform, selectedTransformation);
+    const transformedWord = typeof transformedValue === 'string' ? transformedValue.toLowerCase() : String(transformedValue);
+
+    if (answer.toLowerCase() === transformedWord) {
+      console.log("Your answer is correct!");
+    } else {
+      console.log("Your answer is incorrect. The correct answer is:", transformedValue);
+    }
+
+    rl.question('Do you want to play again? (yes/no): ', (playAgain) => {
+      if (playAgain.toLowerCase() === 'yes') {
+        startGame(); // Restart the game
+      } else {
+        rl.close(); // Close the readline interface
+      }
+    });
+  });
+}
+
+startGame();
 
 
