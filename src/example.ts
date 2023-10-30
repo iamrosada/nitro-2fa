@@ -1,47 +1,66 @@
-import { chooseWordSource} from './nitro'
-
+import { chooseWordSource, nitro2FA,randomIndexSelected} from './nitro'
+const userPassword = "user_password_here";
 // To use words from a file:
 try {
-  const words =  chooseWordSource({ sourceType: 'file' });
-  words.then((result) => {
-    console.log("Promise resolved with result:", result);
-  })
-  .catch((error) => {
-    console.error("Promise rejected with error:", error);
-  });
-  // Your code here
-} catch (error:any) {
+  // Call chooseWordSource and handle the promise
+  chooseWordSource({ sourceType: 'file', userPassword: userPassword })
+    .then((words) => {
+      console.log("Words:", words.wordsArray);
+      console.log("Words:", words.encryptedData);
+    
+
+      // Now that you have the 'words', call nitro2FA with a user answer
+      const userAnswer = 'your_answer_here'; // Replace with an actual answer
+      return nitro2FA(words.wordsArray, userAnswer);
+    })
+    .then((result) => {
+      console.log("nitro2FA Result:", result);
+    })
+    .catch((error) => {
+      console.error("Promise rejected with error:", error);
+    });
+} catch (error) {
   console.error(error.message);
 }
-
-// // To use predefined array of words:
+// To use predefined array of words:
 // try {
-//   const words = await chooseWordSource({ sourceType: 'array' });
-//   console.log(words)
+//   // Call chooseWordSource and handle the promise
+//   chooseWordSource({ sourceType: 'array' ,userPassword: userPassword})
+//     .then((words) => {
+//       console.log("Words:", words);
 
-//   // Your code here
-// } catch (error:any) {
-//   console.error(error.message);
-// }
-
-// // To use user-provided data (array of words):
-// const userWords = ['custom', 'user', 'words'];
-// try {
-//   const words = await chooseWordSource({ sourceType: 'user', userWords });
-//   console.log(words)
-
-//   // Your code here
-// } catch (error:any) {
+//       // Now that you have the 'words', call nitro2FA with a user answer
+//       const userAnswer = 'your_answer_here'; // Replace with an actual answer
+//       return nitro2FA(words, userAnswer);
+//     })
+//     .then((result) => {
+//       console.log("nitro2FA Result:", result);
+//     })
+//     .catch((error) => {
+//       console.error("Promise rejected with error:", error);
+//     });
+// } catch (error) {
 //   console.error(error.message);
 // }
 
 // // To use user-provided data from a file:
 // const userFile = 'path/to/user/word/file.txt';
 // try {
-//   const words = await chooseWordSource({ sourceType: 'user', userWords: userFile });
-//   console.log(words)
+//   // Call chooseWordSource and handle the promise
+//   chooseWordSource({ sourceType: 'user', userWords: userFile,userPassword: userPassword })
+//     .then((words) => {
+//       console.log("Words:", words);
 
-//   // Your code here
-// } catch (error:any) {
+//       // Now that you have the 'words', call nitro2FA with a user answer
+//       const userAnswer = 'your_answer_here'; // Replace with an actual answer
+//       return nitro2FA(words, userAnswer);
+//     })
+//     .then((result) => {
+//       console.log("nitro2FA Result:", result);
+//     })
+//     .catch((error) => {
+//       console.error("Promise rejected with error:", error);
+//     });
+// } catch (error) {
 //   console.error(error.message);
 // }
