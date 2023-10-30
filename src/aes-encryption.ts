@@ -1,6 +1,6 @@
 import * as crypto from 'crypto';
 
-function transformWordsToFiveCharacters(words: string[]): string[] {
+export function transformWordsToFiveCharacters(words: string[]): string[] {
   const vowels = 'aeiou';
   const consonants = 'bcdfghjklmnpqrstvwxyz';
 
@@ -11,10 +11,8 @@ function transformWordsToFiveCharacters(words: string[]): string[] {
 
   const transformedWords = words.map((word: string) => {
     if (word.length > 5) {
-      // Se a palavra tiver mais de 5 caracteres, corte-a para 5 caracteres
       return word.slice(0, 5);
     } else if (word.length < 5) {
-      // Se a palavra tiver menos de 5 caracteres, adicione uma vogal ou consoante aleatória
       const charactersToAdd = 5 - word.length;
       let transformedWord = word;
       for (let i = 0; i < charactersToAdd; i++) {
@@ -23,7 +21,6 @@ function transformWordsToFiveCharacters(words: string[]): string[] {
       }
       return transformedWord;
     } else {
-      // Se a palavra já tiver 5 caracteres, não é necessário fazer nada
       return word;
     }
   });
@@ -31,56 +28,40 @@ function transformWordsToFiveCharacters(words: string[]): string[] {
   return transformedWords;
 }
 
-const words: string[] = [
-  "apple",
-  "banana",
-  "cherry",
-  "date",
-  "elderberry",
-  "fig",
-  "grape",
-  "honeydew",
-  "kiwi",
-  "lemon",
-  "mango",
-  "nectarine"
-];
+const SALT = crypto.randomBytes(16);
 
-const transformedWords: string[] = transformWordsToFiveCharacters(words);
-console.log(transformedWords);
+export function encryptWords(joinedWords: string, senha: string): string {
+  // Derive a secure encryption key from the password and salt using PBKDF2.
+  const key = crypto.pbkdf2Sync(senha, SALT, 100000, 32, 'sha512');
 
-const concatenatedWords: string = transformedWords.join('');
+  // Generate a random IV (Initialization Vector) for each encryption.
+  const iv = crypto.randomBytes(16);
 
-// Sua senha secreta
-const senha = 'minhaSenhaSecreta';
-
-// Crie uma chave a partir da senha usando PBKDF2
-const salt = crypto.randomBytes(16); // Um valor aleatório para salgar a senha
-const key = crypto.pbkdf2Sync(senha, salt, 100000, 32, 'sha512');
-
-// Gerar um IV (Vetor de Inicialização) para a criptografia
-const iv = crypto.randomBytes(16);
-
-// Função para criptografar as palavras após a união
-function encryptWordsJoined(joinedWords: string, key: Buffer, iv: Buffer): string {
+  // Create a Cipher instance with the derived key and IV.
   const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+
+  // Encrypt the data.
   let encryptedData: string = cipher.update(joinedWords, 'utf8', 'hex');
   encryptedData += cipher.final('hex');
-  return encryptedData;
+
+  // Combine the IV and the encrypted data (IV is needed for decryption).
+  return iv.toString('hex') + encryptedData;
 }
 
-// Função para descriptografar as palavras
-function decryptWordsJoined(encryptedData: string, key: Buffer, iv: Buffer): string {
+export function decryptWords(encryptedData: string, senha: string): string {
+  // Derive the same key from the password and the stored salt.
+  const key = crypto.pbkdf2Sync(senha, SALT, 100000, 32, 'sha512');
+
+  // Extract the IV from the encrypted data (first 32 characters).
+  const iv = Buffer.from(encryptedData.slice(0, 32), 'hex');
+  const encryptedText = encryptedData.slice(32);
+
+  // Create a Decipher instance with the derived key and extracted IV.
   const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
-  let decryptedData: string = decipher.update(encryptedData, 'hex', 'utf8');
+
+  // Decrypt the data.
+  let decryptedData: string = decipher.update(encryptedText, 'hex', 'utf8');
   decryptedData += decipher.final('utf8');
+
   return decryptedData;
 }
-
-// Criptografar as palavras após união
-const encryptedData: string = encryptWordsJoined(concatenatedWords, key, iv);
-console.log('Dados criptografados:', encryptedData);
-
-// Descriptografar as palavras
-const decryptedData: string = decryptWordsJoined(encryptedData, key, iv);
-console.log('Dados descriptografados:', decryptedData);
