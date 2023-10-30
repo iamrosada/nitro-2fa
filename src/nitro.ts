@@ -112,38 +112,62 @@ export async function chooseWordSource(config: {
   });
 }
 
+/**
+ * Generates a random index, selected transformation, and associated transformation message.
+ * @param {string[]} words - An array of words.
+ * @returns {{randomIndex: number, message: string, selectedTransformation: string}} - An object with random index, message, and transformation.
+ */
+export function randomIndexSelected(words) {
+  const randomIndex = Math.floor(Math.random() * words.length);
+  const selectedTransformation = getRandomTransformation(); // Choose a random transformation
+  const wordToTransform = words[randomIndex];
+
+  const message = displayTransformationInfo(
+    wordToTransform,
+    selectedTransformation,
+    randomIndex
+  );
+
+  return { randomIndex, message, selectedTransformation };
+}
+
+/**
+ * Perform a Nitro 2FA challenge.
+ * @param {string[]} words - An array of words.
+ * @param {string} userAnswer - User's answer to the challenge.
+ * @returns {Promise<{ message: string, status: string }>} - A promise that resolves with the transformation message and status.
+ */
 export function nitro2FA(words, userAnswer) {
   return new Promise((resolve, reject) => {
-    const randomIndex = Math.floor(Math.random() * words.length);
-    const wordToTransform = words[randomIndex];
-    const selectedTransformation = getRandomTransformation(); // Choose a random transformation
-    displayTransformationInfo(
-      wordToTransform,
-      selectedTransformation,
-      randomIndex
-    );
-
-    const transformedValue = transformWord(
-      wordToTransform,
-      selectedTransformation
-    );
-    const transformedWord =
-      typeof transformedValue === "string"
-        ? transformedValue.toLowerCase()
-        : transformedValue;
-    const transformedWords = (transformedWord as string).toLowerCase();
-
-    if (userAnswer.toLowerCase() === transformedWords) {
-      console.log("Your answer is correct!");
-      resolve("Correct");
-    } else {
-      console.log(
-        "Your answer is incorrect. The correct answer is:",
-        transformedValue
+    try {
+      const result = randomIndexSelected(words);
+      const wordToTransform = words[result.randomIndex];
+      const transformedValue = transformWord(
+        wordToTransform,
+        result.selectedTransformation
       );
-      reject("Incorrect");
-    }
+      const transformedWord =
+        typeof transformedValue === "string"
+          ? transformedValue.toLowerCase()
+          : transformedValue;
+      const transformedWords = (transformedWord as string).toLowerCase();
 
-    resolve("Game over");
+      if (userAnswer.toLowerCase() === transformedWords) {
+        resolve({
+          message: result.message,
+          status: "Correct",
+        });
+      } else {
+        resolve({
+          message: result.message,
+          status: "Incorrect",
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
   });
 }
+
+
+
