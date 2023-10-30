@@ -18,7 +18,7 @@ export function provideUserWords(
     return Promise.resolve(wordsArray);
   } else if (typeof userWords === "string") {
     // Load words from the provided file path
-    return readFileAndExtractWords(userWords);
+    return readFileAndExtractWords(userWords,userPassword);
   } else {
     return Promise.reject(
       new Error(
