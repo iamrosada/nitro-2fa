@@ -4,14 +4,15 @@ import { readFileAndExtractWords } from "./readFileAndExtractWords";
 const PASSWORD = "minhaSenhaSecreta";
 
 export function provideUserWords(
-  userWords: string[] | string = []
+  userWords: string[] | string = [],  userPassword: string
+
 ): Promise<string[]> {
   if (Array.isArray(userWords)) {
     const transformedWords: string[] =
       transformWordsToFiveCharacters(userWords);
     const concatenatedWords: string = transformedWords.join("");
-    const encryptedData: string = encryptWords(concatenatedWords, PASSWORD);
-    const decryptedData: string = decryptWords(encryptedData, PASSWORD);
+    const encryptedData: string = encryptWords(concatenatedWords, userPassword);
+    const decryptedData: string = decryptWords(encryptedData, userPassword);
     const wordLength = 5;
     const wordsArray = separateWords(decryptedData, wordLength);
     return Promise.resolve(wordsArray);
