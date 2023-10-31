@@ -1,5 +1,5 @@
 {
-  "name": "nitro-2fa",
+  "name": "@iamrosada/nitro-2fa",
   "version": "0.0.1",
   "description": "Nitro crypto is 2FA modele with words",
   "main": "./dist/index.js",
@@ -10,6 +10,10 @@
     "release": "npm run build && changeset publish",
     "lint": "tsc",
     "start": "ts-node src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iamrosada/nitro-2fa.git"
   },
   "keywords": [
     "2FA"
@@ -28,5 +32,7 @@
     "body-parser": "^1.20.2",
     "express": "^4.18.2",
     "nodemon": "^3.0.1"
-  }
+  },
+  "homepage": "https://github.com/iamrosada/nitro-2fa#readme"
+
 }
