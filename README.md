@@ -1,6 +1,3 @@
-You can create a README file for your code with explanations and usage information. Here's a simple template for your README:
-
----
 
 # Nitro 2FA, Authentication System
 
