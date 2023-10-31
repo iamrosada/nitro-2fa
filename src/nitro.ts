@@ -112,7 +112,7 @@ export async function chooseWordSource(config: {
 }
 
 
-export function createContext() {
+export function createNitro2FAContext() {
   const context = {
     _words: [],
     randomIndex: 0,
@@ -123,28 +123,16 @@ export function createContext() {
   context.randomIndex = Math.floor(Math.random() * 12);
   context.selectedTransformation = getRandomTransformation();
 
-  // function randomIndexSelected() {
-  
-  //   context.randomIndex = Math.floor(Math.random() * context._words.length);
-  //   context.selectedTransformation = getRandomTransformation();
-  //   // context.wordToTransform = context._words[context.randomIndex];
-  //   console.log(context._words, "randomIndexSelected");
-  // }
-  // randomIndexSelected()
-
   function getRandomTransformation() {
     const transformations = ["remove-vowels", "count-vowels", "count-consonants", "reverse"];
     return transformations[Math.floor(Math.random() * transformations.length)];
   }
 
   function displayTransformationInfo() {
-    // randomIndexSelected();
 
     const word = context.wordToTransform;
     const transformation = context.selectedTransformation;
     const randomIndex = context.randomIndex;
-    console.log(context.randomIndex,"displayTransformationInfo")
-    console.log(context.wordToTransform,"displayTransformationInfo")
 
 
     console.log(transformation,"transformation")
@@ -158,22 +146,19 @@ export function createContext() {
       case "reverse":
         return `IF THE WORD IN POSITION ${randomIndex + 1} IS REVERSED, IT WILL BE: ${word}`;
       default:
-        return 'xx';
+        return '';
     }
   }
 
   function nitro2FA(words, userAnswer) {
     context._words = words;
-    // randomIndexSelected();
-   console.log(words)
-    console.log(context.randomIndex,"2fa")
+
 
     const wordToTransform = words[context.randomIndex];
     const transformedValue = transformWord(wordToTransform, context.selectedTransformation);
-    const transformedWord = typeof transformedValue === "string" ? transformedValue.toLowerCase() : transformedValue;
 
-    console.log(userAnswer,"userAnswer", "transformedWord",transformedWord)
-    if (userAnswer.toLowerCase() || userAnswer === transformedWord) {
+    console.log(userAnswer,"userAnswer", "transformedWord",transformedValue)
+    if (userAnswer.toLowerCase()  === transformedValue.toLowerCase()) {
       return { status: "Correct" };
     } else {
       return { status: "Incorrect" };

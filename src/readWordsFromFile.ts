@@ -1,12 +1,10 @@
 import path from "path";
 import * as fs from "fs";
-import { encryptWords, decryptWords } from "./nitroEncryption";
 
 async function readWordsFromFile(
   filename: string,
   length: number,
   count: number,
-  senha: string
 ): Promise<string[]> {
   const filePath = path.join(__dirname, filename);
 
@@ -28,12 +26,6 @@ async function readWordsFromFile(
       () => Math.random() - 0.5
     );
     const wordsToPlay = uniqueWordsArray.slice(0, count);
-
-    const concatenatedWords: string = wordsToPlay.join("");
-    const encryptedData: string = encryptWords(concatenatedWords, senha);
-
-    const decryptedData: string = decryptWords(encryptedData, senha);
-    console.log("Dados descriptografados:", decryptedData);
 
     return wordsToPlay;
   } catch (error) {
