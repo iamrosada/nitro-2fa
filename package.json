@@ -1,5 +1,5 @@
 {
-  "name": "nitro-crypto",
+  "name": "nitro-2fa",
   "version": "0.0.1",
   "description": "Nitro crypto is 2FA modele with words",
   "main": "./dist/index.js",
