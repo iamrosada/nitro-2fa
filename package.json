@@ -1,6 +1,6 @@
 {
   "name": "@iamrosada/nitro-2fa",
-  "version": "0.0.1",
+  "version": "0.0.0-development",
   "description": "Nitro  is 2FA modele with words",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -9,7 +9,8 @@
     "build": "tsup --format cjs,esm --dts",
     "release": "npm run build && changeset publish",
     "lint": "tsc",
-    "start": "ts-node src/index.ts"
+    "start": "ts-node src/index.ts",
+    "semantic-release": "semantic-release --branches main"
   },
   "publishConfig": {
     "@iamrosada:registry": "https://npm.pkg.github.com"
@@ -28,7 +29,8 @@
     "@types/express": "^4.17.20",
     "ts-node-dev": "^2.0.0",
     "tsup": "^7.2.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "semantic-release": "^22.0.6"
   },
   "dependencies": {
     "@types/node": "^20.8.10",
@@ -37,5 +39,4 @@
     "nodemon": "^3.0.1"
   },
   "homepage": "https://github.com/iamrosada/nitro-2fa#readme"
-
 }
