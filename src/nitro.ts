@@ -16,7 +16,7 @@ const NUM_WORDS_TO_READ = 12;
 export async function chooseWordSource(config: {
   sourceType: "file" | "array" | "user";
   userWords?: string[] | string;
-  userPassword?: string;
+  userPassword: string;
 }): Promise<{ wordsArray: string[]; encryptedData: string }> {
   return new Promise(async (resolve, reject) => {
     if (config.sourceType === "file") {
@@ -34,11 +34,11 @@ export async function chooseWordSource(config: {
           const concatenatedWords: string = transformedWords.join("");
           const encryptedData: string = encryptWords(
             concatenatedWords,
-            config.userPassword === undefined ? "" : config.userPassword
+            config.userPassword
           );
           const decryptedData: string = decryptWords(
             encryptedData,
-            config.userPassword === undefined ? "" : config.userPassword
+            config.userPassword 
           );
           const wordLength = 5;
           const wordsArray = separateWords(decryptedData, wordLength);
@@ -69,11 +69,11 @@ export async function chooseWordSource(config: {
       const concatenatedWords: string = transformedWords.join("");
       const encryptedData: string = encryptWords(
         concatenatedWords,
-        config.userPassword === undefined ? "" : config.userPassword
+        config.userPassword
       );
       const decryptedData: string = decryptWords(
         encryptedData,
-        config.userPassword === undefined ? "" : config.userPassword
+        config.userPassword 
       );
       const wordLength = 5;
       const wordsArray = separateWords(decryptedData, wordLength);
@@ -82,7 +82,7 @@ export async function chooseWordSource(config: {
     } else if (config.sourceType === "user") {
       if (config.userPassword) {
         try {
-          const userWords = await provideUserWords(config.userWords);
+          const userWords = await provideUserWords(config.userWords, config.userPassword === undefined ? "" : config.userPassword);
           const transformedWords: string[] =
             transformWordsToFiveCharacters(userWords);
           const concatenatedWords: string = transformedWords.join("");
