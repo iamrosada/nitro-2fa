@@ -1,66 +1,62 @@
-import { chooseWordSource, nitro2FA,randomIndexSelected} from './nitro'
-const userPassword = "user_password_here";
-// To use words from a file:
-try {
-  // Call chooseWordSource and handle the promise
-  chooseWordSource({ sourceType: 'file', userPassword: userPassword })
-    .then((words) => {
-      console.log("Words:", words.wordsArray);
-      console.log("Words:", words.encryptedData);
+import bodyParser from 'body-parser';
+import { chooseWordSource, createNitro2FAContext } from './nitro';
+import express, { Request, Response } from 'express';
+
+
+const app = express();
+const port = 3000;
+
+app.use(bodyParser.json());
+
+let userPassword = "user_password_here"; 
+
+const myContext = createNitro2FAContext();
+let wordsArrayFor2FA: string[] = []; 
+
+app.get('/2fa', async (req: Request, res: Response) => {
+  try {
+    const words = await chooseWordSource({ sourceType: 'file', userPassword: userPassword });
+
+    wordsArrayFor2FA = words.wordsArray;
+
+    res.json({ message: words.wordsArray, keySaveIntoDatabase: words.encryptedData });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get('/2fa', async (req: Request, res: Response) => {
+  try {
+    const words = await chooseWordSource({ sourceType: 'file', userPassword: userPassword });
     
 
-      // Now that you have the 'words', call nitro2FA with a user answer
-      const userAnswer = 'your_answer_here'; // Replace with an actual answer
-      return nitro2FA(words.wordsArray, userAnswer);
-    })
-    .then((result) => {
-      console.log("nitro2FA Result:", result);
-    })
-    .catch((error) => {
-      console.error("Promise rejected with error:", error);
-    });
-} catch (error) {
-  console.error(error.message);
-}
-// To use predefined array of words:
-// try {
-//   // Call chooseWordSource and handle the promise
-//   chooseWordSource({ sourceType: 'array' ,userPassword: userPassword})
-//     .then((words) => {
-//       console.log("Words:", words);
+    wordsArrayFor2FA = words.wordsArray;
+    res.json({ message: words.wordsArray, keySaveIntoDatabase: words.encryptedData });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
-//       // Now that you have the 'words', call nitro2FA with a user answer
-//       const userAnswer = 'your_answer_here'; // Replace with an actual answer
-//       return nitro2FA(words, userAnswer);
-//     })
-//     .then((result) => {
-//       console.log("nitro2FA Result:", result);
-//     })
-//     .catch((error) => {
-//       console.error("Promise rejected with error:", error);
-//     });
-// } catch (error) {
-//   console.error(error.message);
-// }
+app.get('/passwordReset', (req: Request, res: Response) => {
+  const transformationInfo = myContext.displayTransformationInfo();
+  res.json({ transformationInfo });
+});
 
-// // To use user-provided data from a file:
-// const userFile = 'path/to/user/word/file.txt';
-// try {
-//   // Call chooseWordSource and handle the promise
-//   chooseWordSource({ sourceType: 'user', userWords: userFile,userPassword: userPassword })
-//     .then((words) => {
-//       console.log("Words:", words);
+app.post('/checkAnswer', async (req: Request, res: Response) => {
+  try {
+    const userAnswer = req.body.user_answer;
 
-//       // Now that you have the 'words', call nitro2FA with a user answer
-//       const userAnswer = 'your_answer_here'; // Replace with an actual answer
-//       return nitro2FA(words, userAnswer);
-//     })
-//     .then((result) => {
-//       console.log("nitro2FA Result:", result);
-//     })
-//     .catch((error) => {
-//       console.error("Promise rejected with error:", error);
-//     });
-// } catch (error) {
-//   console.error(error.message);
-// }
+    const result = await myContext.nitro2FA(wordsArrayFor2FA, userAnswer);
+
+    res.json(result); 
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
+});

@@ -11,6 +11,9 @@
     "lint": "tsc",
     "start": "ts-node src/index.ts"
   },
+  "publishConfig": {
+    "@iamrosada:registry": "https://npm.pkg.github.com"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/iamrosada/nitro-2fa.git"
