@@ -1,7 +1,7 @@
 {
   "name": "@iamrosada/nitro-2fa",
   "version": "0.0.1",
-  "description": "Nitro crypto is 2FA modele with words",
+  "description": "Nitro  is 2FA modele with words",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/iamrosada/nitro-2fa.git"
+    "url": "https://github.com/iamrosada/nitro-2fa.git"
   },
   "keywords": [
     "2FA"
