@@ -1,7 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs';
 
-
 function readWordsFromFile(filename: string, length: number, count: number): string[] {
   const filePath = path.join(__dirname, filename);
   try {

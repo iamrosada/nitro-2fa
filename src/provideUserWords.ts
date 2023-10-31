@@ -1,7 +1,6 @@
 import { decryptWords, encryptWords, separateWords, transformWordsToFiveCharacters } from "./nitroEncryption";
 import { readFileAndExtractWords } from "./readFileAndExtractWords";
 
-const PASSWORD = "minhaSenhaSecreta";
 
 export function provideUserWords(
   userWords: string[] | string = [],  userPassword: string

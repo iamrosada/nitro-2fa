@@ -7,7 +7,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsup",
-    "dev": "nodemon src/aes-encryption.ts",
+    "dev": "nodemon src/example.ts",
     "start": "ts-node src/index.ts"
   },
   "keywords": [
