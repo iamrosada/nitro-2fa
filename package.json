@@ -6,8 +6,9 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsup",
-    "dev": "nodemon src/example.ts",
+    "build": "tsup --format cjs,esm --dts",
+    "release": "npm run build && changeset publish",
+    "lint": "tsc",
     "start": "ts-node src/index.ts"
   },
   "keywords": [
