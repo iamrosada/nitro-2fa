@@ -5,7 +5,7 @@ import {
   separateWords,
 } from "./nitroEncryption";
 import { readWordsFromFile } from "./readWordsFromFile";
-import { displayTransformationInfo } from "./displayTransformationInfo";
+// import { displayTransformationInfo } from "./displayTransformationInfo";
 import { transformWord } from "./transformWord";
 import { getRandomTransformation } from "./getRandomTransformation";
 import { provideUserWords } from "./provideUserWords";
@@ -25,7 +25,6 @@ export async function chooseWordSource(config: {
           "palavras.txt",
           WORD_LENGTH_LIMIT,
           NUM_WORDS_TO_READ,
-          config.userPassword === undefined ? "" : config.userPassword
         );
 
         if (wordsFromFile.length > 0) {
@@ -82,7 +81,7 @@ export async function chooseWordSource(config: {
     } else if (config.sourceType === "user") {
       if (config.userPassword) {
         try {
-          const userWords = await provideUserWords(config.userWords, config.userPassword === undefined ? "" : config.userPassword);
+          const userWords = await provideUserWords(config.userWords, config.userPassword);
           const transformedWords: string[] =
             transformWordsToFiveCharacters(userWords);
           const concatenatedWords: string = transformedWords.join("");
@@ -112,62 +111,78 @@ export async function chooseWordSource(config: {
   });
 }
 
-/**
- * Generates a random index, selected transformation, and associated transformation message.
- * @param {string[]} words - An array of words.
- * @returns {{randomIndex: number, message: string, selectedTransformation: string}} - An object with random index, message, and transformation.
- */
-export function randomIndexSelected(words) {
-  const randomIndex = Math.floor(Math.random() * words.length);
-  const selectedTransformation = getRandomTransformation(); // Choose a random transformation
-  const wordToTransform = words[randomIndex];
 
-  const message = displayTransformationInfo(
-    wordToTransform,
-    selectedTransformation,
-    randomIndex
-  );
+export function createContext() {
+  const context = {
+    _words: [],
+    randomIndex: 0,
+    selectedTransformation: '',
+    wordToTransform: '',
+  };
+  console.info(context)
+  context.randomIndex = Math.floor(Math.random() * 12);
+  context.selectedTransformation = getRandomTransformation();
 
-  return { randomIndex, message, selectedTransformation };
-}
+  // function randomIndexSelected() {
+  
+  //   context.randomIndex = Math.floor(Math.random() * context._words.length);
+  //   context.selectedTransformation = getRandomTransformation();
+  //   // context.wordToTransform = context._words[context.randomIndex];
+  //   console.log(context._words, "randomIndexSelected");
+  // }
+  // randomIndexSelected()
 
-/**
- * Perform a Nitro 2FA challenge.
- * @param {string[]} words - An array of words.
- * @param {string} userAnswer - User's answer to the challenge.
- * @returns {Promise<{ message: string, status: string }>} - A promise that resolves with the transformation message and status.
- */
-export function nitro2FA(words, userAnswer) {
-  return new Promise((resolve, reject) => {
-    try {
-      const result = randomIndexSelected(words);
-      const wordToTransform = words[result.randomIndex];
-      const transformedValue = transformWord(
-        wordToTransform,
-        result.selectedTransformation
-      );
-      const transformedWord =
-        typeof transformedValue === "string"
-          ? transformedValue.toLowerCase()
-          : transformedValue;
-      const transformedWords = (transformedWord as string).toLowerCase();
+  function getRandomTransformation() {
+    const transformations = ["remove-vowels", "count-vowels", "count-consonants", "reverse"];
+    return transformations[Math.floor(Math.random() * transformations.length)];
+  }
 
-      if (userAnswer.toLowerCase() === transformedWords) {
-        resolve({
-          message: result.message,
-          status: "Correct",
-        });
-      } else {
-        resolve({
-          message: result.message,
-          status: "Incorrect",
-        });
-      }
-    } catch (error) {
-      reject(error);
+  function displayTransformationInfo() {
+    // randomIndexSelected();
+
+    const word = context.wordToTransform;
+    const transformation = context.selectedTransformation;
+    const randomIndex = context.randomIndex;
+    console.log(context.randomIndex,"displayTransformationInfo")
+    console.log(context.wordToTransform,"displayTransformationInfo")
+
+
+    console.log(transformation,"transformation")
+    switch (transformation) {
+      case "remove-vowels":
+        return `IF I REMOVE THE VOWELS FROM THE WORD IN THIS POSITION ${randomIndex + 1}, IT WILL BE: ${word}`;
+      case "count-vowels":
+        return `IF I COUNT THE VOWELS IN THE WORD IN THIS POSITION ${randomIndex + 1}, THE VALUE IS: ${word}`;
+      case "count-consonants":
+        return `IF I REMOVE THE VOWELS IN THE WORD IN THIS POSITION ${randomIndex + 1}, THE VALUE IS: ${word}`;
+      case "reverse":
+        return `IF THE WORD IN POSITION ${randomIndex + 1} IS REVERSED, IT WILL BE: ${word}`;
+      default:
+        return 'xx';
     }
-  });
+  }
+
+  function nitro2FA(words, userAnswer) {
+    context._words = words;
+    // randomIndexSelected();
+   console.log(words)
+    console.log(context.randomIndex,"2fa")
+
+    const wordToTransform = words[context.randomIndex];
+    const transformedValue = transformWord(wordToTransform, context.selectedTransformation);
+    const transformedWord = typeof transformedValue === "string" ? transformedValue.toLowerCase() : transformedValue;
+
+    console.log(userAnswer,"userAnswer", "transformedWord",transformedWord)
+    if (userAnswer.toLowerCase() || userAnswer === transformedWord) {
+      return { status: "Correct" };
+    } else {
+      return { status: "Incorrect" };
+    }
+  }
+
+  return {
+    displayTransformationInfo,
+    nitro2FA,
+    
+  };
 }
-
-
-
