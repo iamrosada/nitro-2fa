@@ -34,7 +34,7 @@ function readWordsFromFile(filename: string, length: number, count: number): str
 }
 
 
-// Lê aleatoriamente 12 palavras de até 6 caracteres do arquivo "palavras.txt"
+/// Lê aleatoriamente 12 palavras de até 6 caracteres do arquivo "palavras.txt"
 const numberOfWordsToRead = 12;
 const wordLength = 6;
 const words: string[] = readWordsFromFile('palavras.txt', wordLength, numberOfWordsToRead);
