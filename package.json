@@ -13,7 +13,7 @@
     "semantic-release": "semantic-release --branches main"
   },
   "publishConfig": {
-    "@iamrosada:registry": "https://npm.pkg.github.com"
+    "registry": "https://npm.pkg.github.com/iamrosada"
   },
   "repository": {
     "type": "git",
@@ -22,7 +22,10 @@
   "keywords": [
     "2FA"
   ],
-  "author": "Luis de Água Rosada",
+  "author":{
+    "name": "Luis de Água Rosada",
+    "email":"luisrosada2018@gmail.com"
+  },
   "license": "MIT",
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
