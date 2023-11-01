@@ -1,5 +1,5 @@
 {
-  "name": "@iamrosada/nitro-2fa",
+  "name": "nitro-2fa",
   "version": "1.0.0",
   "description": "Nitro  is 2FA modele with words",
   "main": "./dist/index.js",
