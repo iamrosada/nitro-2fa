@@ -8,9 +8,9 @@ on:
     branches:
       - '*'
 
-jobs:
-  quality:
-    runs-on: ubuntu-latest
+  env:
+      GITHUB_TOKEN: ${{ secrets.TOKEN }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
     steps:
       - name: Checkout code
@@ -27,34 +27,14 @@ jobs:
       - name: Build and Test
         run: npm run build
 
-      - name: Set up npm
-        run: npm config set //npm.pkg.github.com/:_authToken ${{ secrets.NPM_TOKEN }}
-
-      - name: Set up GitHub token in .npmrc
+      - name: Set up GitHub and NPM tokens
         run: |
-          echo "//npm.pkg.github.com/:_authToken=\${{ secrets.GITHUB_PAT }}" >> ~/.npmrc
-          echo "registry=https://npm.pkg.github.com/iamrosada" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=$NPM_TOKEN" >> ~/.yarnrc
+          echo "//npm.pkg.github.com/:_authToken=$NPM_TOKEN" >> ~/.pnpmrc
+          git config --global user.name "iamrosada"
+          git config --global user.email "luisrosada2018@gmail.com"
+          git config --global credential.helper cache
         env:
-          GITHUB_PAT: ${{ secrets.PAT }}
-
-  publish:
-    runs-on: ubuntu-latest
-
-    if: github.ref == 'refs/heads/main'
-
-    needs: quality
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Use Node.js 14.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: 14.x
-
-      - name: Install npm dependencies
-        run: npm ci
-        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GITHUB_PAT: ${{ secrets.PAT }}
