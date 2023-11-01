@@ -29,5 +29,8 @@
     "express": "^4.18.2",
     "nodemon": "^3.0.1"
   },
-  "homepage": "https://github.com/iamrosada/nitro-2fa#readme"
+  "homepage": "https://github.com/iamrosada/nitro-2fa#readme",
+  "engines": {
+    "node": ">=10.5.0"
+  }
 }
