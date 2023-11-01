@@ -124,7 +124,7 @@ export function createNitro2FAContext() {
 
   function getRandomTransformation() {
     const transformations = ["remove-vowels", "count-vowels", "count-consonants", "reverse"];
-    return transformations[Math.floor(Math.random() * transformations.length)];
+    return transformations[Math.floor(Math.random() * 4)];
   }
 
   function displayTransformationInfo() {
@@ -141,29 +141,48 @@ export function createNitro2FAContext() {
       case "count-vowels":
         return `IF I COUNT THE VOWELS IN THE WORD IN THIS POSITION ${randomIndex + 1}, THE VALUE IS: ${word}`;
       case "count-consonants":
-        return `IF I REMOVE THE VOWELS IN THE WORD IN THIS POSITION ${randomIndex + 1}, THE VALUE IS: ${word}`;
+        return `IF I COUNT THE CONSONANTS IN THE WORD IN THIS POSITION ${randomIndex + 1}, THE VALUE IS: ${word}`;
       case "reverse":
         return `IF THE WORD IN POSITION ${randomIndex + 1} IS REVERSED, IT WILL BE: ${word}`;
       default:
         return '';
-    }
+    }    
   }
 
-  function nitro2FA(words, userAnswer) {
+  async function nitro2FA(words, userAnswer) {
+    // Debugging logs
+    console.log("Selected word to transform:", words[context.randomIndex]);
+    console.log("Selected transformation:", context.selectedTransformation);
+  
     context._words = words;
-
-
     const wordToTransform = words[context.randomIndex];
     const transformedValue = transformWord(wordToTransform, context.selectedTransformation);
+    const wordToString = typeof transformedValue === 'number' ? String(transformedValue) : transformedValue;
 
-    console.log(userAnswer,"userAnswer", "transformedWord",transformedValue)
-    if (userAnswer.toLowerCase()  === transformedValue.toLowerCase()) {
+    // Convert userAnswer to a string if it's a number
+    const answerToString = typeof userAnswer === 'number' ? String(userAnswer) : userAnswer;
+  
+    // Debugging logs
+    console.log("User's answer:", typeof(userAnswer) , userAnswer);
+    console.log("Transformed word:", transformedValue);
+  
+    if (answerToString.toLowerCase() === wordToString.toLowerCase()) {
       return { status: "Correct" };
     } else {
-      return { status: "Incorrect" };
+      console.log("User's answer is incorrect. Providing a new question.");
+      // Generate a new random index and transformation
+      context.randomIndex = Math.floor(Math.random() * 12);
+      context.selectedTransformation = getRandomTransformation();
+      console.log("New selected word to transform:", words[context.randomIndex]);
+      console.log("New selected transformation:", context.selectedTransformation);
+  
+      // Display the new question
+      return { status: "Incorrect", newQuestion: displayTransformationInfo() };
     }
   }
-
+  
+  
+  
   return {
     displayTransformationInfo,
     nitro2FA,

@@ -1,16 +1,16 @@
 export function removeVowels(word: string): string {
-  return word.replace(/[aeiou]/gi, "");
+  return word.replace(/[aeiouAEIOU]/g, '');
 }
 
 export function countVowels(word: string): string {
-  const count = (word.match(/[aeiou]/gi) || []).length;
-  return `Number of vowels: ${count}`;
+  const count = word.match(/[aeiouAEIOU]/g)?.length || 0;
+  const countStr = String(count)
+  return countStr;
 }
 
 export function countConsonants(word: string): string {
-  const consonants = (word.match(/[b-df-hj-np-tv-z]/gi) || []).join("");
-  const convertNumberToString = String(consonants);
-  return `Consonants: ${convertNumberToString}`;
+  const consonants = word.match(/[b-df-hj-np-tv-z]/gi)?.join("") || "";
+  return consonants;
 }
 
 export function reverseWord(word: string): string {

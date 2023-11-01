@@ -26,18 +26,6 @@ app.get('/2fa', async (req: Request, res: Response) => {
   }
 });
 
-app.get('/2fa', async (req: Request, res: Response) => {
-  try {
-    const words = await chooseWordSource({ sourceType: 'file', userPassword: userPassword });
-    
-
-    wordsArrayFor2FA = words.wordsArray;
-    res.json({ message: words.wordsArray, keySaveIntoDatabase: words.encryptedData });
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
 
 app.get('/passwordReset', (req: Request, res: Response) => {
   const transformationInfo = myContext.displayTransformationInfo();

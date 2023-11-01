@@ -11,8 +11,10 @@ export function transformWord(word: string, transformation: string): string {
     case "reverse":
       return reverseWord(word);
     default:
+      console.error(`Unknown transformation: ${transformation}. Returning the original word.`);
       return word;
   }
 }
+
 
 
