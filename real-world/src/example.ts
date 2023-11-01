@@ -1,5 +1,5 @@
 import bodyParser from 'body-parser';
-import { chooseWordSource, createNitro2FAContext } from 'nitro-2fa';
+import { chooseWordSource, createNitro2FAContext } from 'nitro-2fa-auth';
 import express, { Request, Response } from 'express';
 
 

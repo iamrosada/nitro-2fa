@@ -1,6 +1,6 @@
 {
   "name": "nitro-2fa-auth",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Nitro  is 2FA modele with words",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -41,8 +41,7 @@
   },
   "dependencies": {
     "body-parser": "^1.20.2",
-    "express": "^4.18.2",
-    "nitro-2fa": "^1.0.1"
+    "express": "^4.18.2"
   },
   "files": [
     "dist/",
