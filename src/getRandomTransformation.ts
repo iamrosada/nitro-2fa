@@ -1,12 +1,4 @@
-export function getRandomTransformation(): string {
-  const availableTransformations: string[] = [
-    "remove-vowels",
-    "count-vowels",
-    "count-consonants",
-    "reverse",
-  ];
-  const randomIndex: number = Math.floor(
-    Math.random() * availableTransformations.length
-  );
-  return availableTransformations[randomIndex];
+export function getRandomTransformation() {
+  const transformations = ["remove-vowels", "count-vowels", "count-consonants", "reverse"];
+  return transformations[Math.floor(Math.random() * 4)];
 }

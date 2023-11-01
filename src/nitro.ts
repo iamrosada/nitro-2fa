@@ -12,6 +12,17 @@ import { provideUserWords } from "./provideUserWords";
 const WORD_LENGTH_LIMIT = 6;
 const NUM_WORDS_TO_READ = 12;
 
+
+/**
+ * Chooses the word source based on the specified configuration.
+ * created by iamrosada 
+ * @param {object} config - The configuration object.
+ * @param {string} config.sourceType - The source type ("file", "array", or "user").
+ * @param {string[] | string} config.userWords - An optional array of user-provided words or a single string.
+ * @param {string} config.userPassword - The user's password.
+ *
+ * @returns {Promise<{ wordsArray: string[], encryptedData: string }>} A promise that resolves to an object containing the words array and encrypted data.
+ */
 export async function chooseWordSource(config: {
   sourceType: "file" | "array" | "user";
   userWords?: string[] | string;
@@ -110,31 +121,42 @@ export async function chooseWordSource(config: {
   });
 }
 
-
+/**
+ * Performs a Nitro 2FA authentication check.
+ * created by iamrosada
+ * 
+ * @param {string[]} words - An array of words to choose a word for transformation.
+ * @param {string | number} userAnswer - The user's answer, which can be a string or a number.
+ *
+ * @returns {Object} An object describing the verification status.
+ * @property {string} status - The verification status (can be "Correct" or "Incorrect").
+ * @property {string} newQuestion - The new question to display if the user's answer is incorrect.
+ */
 export function createNitro2FAContext() {
   const context = {
-    _words: [],
+    _words: [] as string[],
     randomIndex: 0,
     selectedTransformation: '',
     wordToTransform: '',
   };
-  console.info(context)
   context.randomIndex = Math.floor(Math.random() * 12);
   context.selectedTransformation = getRandomTransformation();
 
-  function getRandomTransformation() {
-    const transformations = ["remove-vowels", "count-vowels", "count-consonants", "reverse"];
-    return transformations[Math.floor(Math.random() * 4)];
-  }
 
+/**
+ * Display information about the transformation.
+ * created by iamrosada
+ * @param {string} word - The word to transform.
+ * @param {string} transformation - The selected transformation.
+ * @param {number} randomIndex - The random index.
+ *
+ * @returns {string} Information about the transformation.
+ */
   function displayTransformationInfo() {
 
     const word = context.wordToTransform;
     const transformation = context.selectedTransformation;
     const randomIndex = context.randomIndex;
-
-
-    console.log(transformation,"transformation")
     switch (transformation) {
       case "remove-vowels":
         return `IF I REMOVE THE VOWELS FROM THE WORD IN THIS POSITION ${randomIndex + 1}, IT WILL BE: ${word}`;
@@ -149,23 +171,26 @@ export function createNitro2FAContext() {
     }    
   }
 
-  async function nitro2FA(words, userAnswer) {
-    // Debugging logs
-    console.log("Selected word to transform:", words[context.randomIndex]);
-    console.log("Selected transformation:", context.selectedTransformation);
+  /**
+ * Performs a Nitro 2FA authentication check.
+ * created by iamrosada
+ * 
+ * @param {string[]} words - An array of words to choose a word for transformation.
+ * @param {string | number} userAnswer - The user's answer, which can be a string or a number.
+ *
+ * @returns {Object} An object describing the verification status.
+ * @property {string} status - The verification status (can be "Correct" or "Incorrect").
+ * @property {string} newQuestion - The new question to display if the user's answer is incorrect.
+ */
+  async function nitro2FA(words: string[], userAnswer: string | number): Promise<{ status: string, newQuestion?: string }> {
   
     context._words = words;
     const wordToTransform = words[context.randomIndex];
     const transformedValue = transformWord(wordToTransform, context.selectedTransformation);
     const wordToString = typeof transformedValue === 'number' ? String(transformedValue) : transformedValue;
 
-    // Convert userAnswer to a string if it's a number
     const answerToString = typeof userAnswer === 'number' ? String(userAnswer) : userAnswer;
-  
-    // Debugging logs
-    console.log("User's answer:", typeof(userAnswer) , userAnswer);
-    console.log("Transformed word:", transformedValue);
-  
+    
     if (answerToString.toLowerCase() === wordToString.toLowerCase()) {
       return { status: "Correct" };
     } else {
@@ -173,9 +198,7 @@ export function createNitro2FAContext() {
       // Generate a new random index and transformation
       context.randomIndex = Math.floor(Math.random() * 12);
       context.selectedTransformation = getRandomTransformation();
-      console.log("New selected word to transform:", words[context.randomIndex]);
-      console.log("New selected transformation:", context.selectedTransformation);
-  
+     
       // Display the new question
       return { status: "Incorrect", newQuestion: displayTransformationInfo() };
     }
