@@ -1,7 +1,8 @@
 
-# Nitro 2FA, Authentication System
+# Nitro 2FA Authentication
 
-The Nitro Authentication System is a password recovery and 2FA system that uses word transformations to verify user identity.
+Nitro 2FA is a Two-Factor Authentication system that uses word transformations for enhanced security. This project provides a set of functions to manage word sources and perform authentication checks.
+
 
 ## Table of Contents
 
@@ -38,23 +39,49 @@ Before you start, make sure you have the following installed:
    npm install
    ```
 
-## Usage
 
-### Choose Word Source
+### Usage
 
-The `chooseWordSource` function is used to select a source of words for the authentication system. It can be from a file, an array, or provided by the user.
+#### Choose Word Source
+
+The `chooseWordSource` function allows you to select the word source based on your configuration.
 
 ```javascript
-import { chooseWordSource } from './nitro';
+const sourceConfig = {
+  sourceType: "file",
+  userWords: "youruserwords",
+  userPassword: "yourpassword",
+};
 
-chooseWordSource({
-  sourceType: 'file', // 'file', 'array', or 'user'
-  userPassword: 'your_password_here',
-  // userWords: 'your_words_here', // Required for 'user' sourceType
-}).then(({ wordsArray, encryptedData }) => {
-  // Use the wordsArray and encryptedData
-});
+chooseWordSource(sourceConfig)
+  .then((result) => {
+    console.log("Words Array:", result.wordsArray);
+    console.log("Encrypted Data:", result.encryptedData);
+  })
+  .catch((error) => {
+    console.error("Error:", error);
+  });
 ```
+
+#### Perform Nitro 2FA Authentication Check
+
+The `createNitro2FAContext` function creates a context for authentication checks.
+
+```javascript
+const context = createNitro2FAContext();
+
+const words = ["word1", "word2", "word3"];
+const userAnswer = "youranswer";
+
+const verificationResult = await context.nitro2FA(words, userAnswer);
+
+if (verificationResult.status === "Correct") {
+  console.log("Authentication successful!");
+} else {
+  console.log("Authentication failed. New question:", verificationResult.newQuestion);
+}
+```
+
 
 ### Create Nitro 2FA Context
 
@@ -76,7 +103,7 @@ console.log(result);
 
 ```typescript
 import bodyParser from 'body-parser';
-import { chooseWordSource, createNitro2FAContext } from './nitro';
+import { chooseWordSource, createNitro2FAContext } from 'nitro-2fa';
 import express, { Request, Response } from 'express';
 
 
@@ -103,18 +130,6 @@ app.get('/2fa', async (req: Request, res: Response) => {
   }
 });
 
-app.get('/2fa', async (req: Request, res: Response) => {
-  try {
-    const words = await chooseWordSource({ sourceType: 'file', userPassword: userPassword });
-    
-
-    wordsArrayFor2FA = words.wordsArray;
-    res.json({ message: words.wordsArray, keySaveIntoDatabase: words.encryptedData });
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
 
 app.get('/passwordReset', (req: Request, res: Response) => {
   const transformationInfo = myContext.displayTransformationInfo();
@@ -149,7 +164,16 @@ The project's code is organized as follows:
 - `getRandomTransformation.js`: Function to get a random transformation.
 - `provideUserWords.js`: Function to provide user-specific words.
 
+
+
+Replace placeholders like `'your_password_here'` and `'user_answer_here'` with actual values.
+
+
+
+
 ## Contributing
+
+Contributions to the Nitro 2FA project are welcome! You can contribute by submitting issues, feature requests, or pull requests.
 
 If you want to contribute to this project, follow these steps:
 
@@ -165,6 +189,9 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
-Replace placeholders like `'your_password_here'` and `'user_answer_here'` with actual values.
 
-Feel free to expand on this README as needed to provide more context and detailed explanations.
+## Contact
+
+If you have any questions or need assistance, you can reach out to [Luis de Agua Rosada](mailto:luisrosa@mail.ru).
+
+```
