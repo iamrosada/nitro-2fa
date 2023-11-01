@@ -88,7 +88,7 @@ if (verificationResult.status === "Correct") {
 The `createNitro2FAContext` function creates a context for the Nitro 2FA system, allowing you to retrieve word transformations and verify user answers.
 
 ```javascript
-import { createNitro2FAContext } from './nitro';
+import { createNitro2FAContext } from 'nitro-2fa-auth';
 
 const myContext = createNitro2FAContext();
 
@@ -103,7 +103,7 @@ console.log(result);
 
 ```typescript
 import bodyParser from 'body-parser';
-import { chooseWordSource, createNitro2FAContext } from 'nitro-2fa';
+import { chooseWordSource, createNitro2FAContext } from 'nitro-2fa-auth';
 import express, { Request, Response } from 'express';
 
 
