@@ -1,6 +1,6 @@
 {
   "name": "nitro-2fa",
-  "version": "1.0.1",
+  "version": "1.1.1",
   "description": "Nitro  is 2FA modele with words",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
