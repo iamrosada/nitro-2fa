@@ -8,7 +8,11 @@ on:
     branches:
       - '*'
 
-  env:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
       GITHUB_TOKEN: ${{ secrets.TOKEN }}
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -35,6 +39,3 @@ on:
           git config --global user.name "iamrosada"
           git config --global user.email "luisrosada2018@gmail.com"
           git config --global credential.helper cache
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
