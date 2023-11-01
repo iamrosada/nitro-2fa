@@ -1,4 +1,3 @@
-
 name: Node.js CI
 
 on:
@@ -31,10 +30,6 @@ jobs:
       - name: Set up npm
         run: npm config set //npm.pkg.github.com/:_authToken ${{ secrets.NPM_TOKEN }}
 
-      - name: Set up GitHub token in .npmrc
-        run: |
-          echo "//npm.pkg.github.com/:_authToken=\${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
-          echo "registry=https://npm.pkg.github.com/iamrosada" >> ~/.npmrc
   publish:
     runs-on: ubuntu-latest
 
@@ -53,6 +48,9 @@ jobs:
 
       - name: Install npm dependencies
         run: npm ci
+
+      - name: Publish Package
+        run: npm publish
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
