@@ -1,6 +1,6 @@
 {
   "name": "nitro-2fa",
-  "version": "0.1.1",
+  "version": "0.2.1",
   "description": "Nitro  is 2FA modele with words",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -16,7 +16,7 @@
     "words"
   ],
   "scripts": {
-    "build": "tsup --format cjs,esm --dts",
+    "build": "tsup --format cjs,esm --dts && cp src/palavras.txt dist/",
     "release": "npm run build && changeset publish",
     "lint": "tsc",
     "start": "nodemon src/example.ts",
@@ -43,5 +43,9 @@
     "body-parser": "^1.20.2",
     "express": "^4.18.2",
     "nitro-2fa": "^1.0.1"
-  }
+  },
+  "files": [
+    "dist/",
+    "palavras.txt"
+  ]
 }
