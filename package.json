@@ -12,23 +12,12 @@
     "start": "ts-node src/index.ts",
     "semantic-release": "semantic-release --branches main"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/iamrosada"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/iamrosada/nitro-2fa.git"
-  },
-  "keywords": [
-    "2FA"
-  ],
-  "author":{
+  "author": {
     "name": "Luis de Água Rosada",
-    "email":"luisrosada2018@gmail.com"
+    "email": "luisrosada2018@gmail.com"
   },
   "license": "MIT",
   "devDependencies": {
-    "@changesets/cli": "^2.26.2",
     "@types/express": "^4.17.20",
     "ts-node-dev": "^2.0.0",
     "tsup": "^7.2.0",
