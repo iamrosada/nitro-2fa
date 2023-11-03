@@ -16,7 +16,10 @@ export function transformWordsToFiveCharacters(words: string[]): string[] {
       const charactersToAdd = 5 - word.length;
       let transformedWord = word;
       for (let i = 0; i < charactersToAdd; i++) {
-        const randomCharacter = i % 2 === 0 ? getRandomCharacter(consonants) : getRandomCharacter(vowels);
+        const randomCharacter =
+          i % 2 === 0
+            ? getRandomCharacter(consonants)
+            : getRandomCharacter(vowels);
         transformedWord += randomCharacter;
       }
       return transformedWord;
@@ -66,8 +69,11 @@ export function decryptWords(encryptedData: string, senha: string): string {
   return decryptedData;
 }
 
-export function separateWords(decryptedData: string, wordLength: number): string[] {
-  const words:string[][] = [];
+export function separateWords(
+  decryptedData: string,
+  wordLength: number
+): string[] {
+  const words: string[][] = [];
   for (let i = 0; i < decryptedData.length; i += wordLength) {
     words.push(decryptedData.slice(i, i + wordLength) as unknown as string[]);
   }

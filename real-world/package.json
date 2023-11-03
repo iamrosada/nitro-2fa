@@ -27,7 +27,13 @@
     "@types/node": "^20.8.10",
     "body-parser": "^1.20.2",
     "express": "^4.18.2",
-    "nodemon": "^3.0.1"
+    "nitro-2fa-auth": "^1.0.2",
+    "nodemon": "^3.0.1",
+    "@typescript-eslint/eslint-plugin": "6.9.1",
+    "@typescript-eslint/parser": "6.9.1",
+    "eslint": "8.52.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1"
   },
   "homepage": "https://github.com/iamrosada/nitro-2fa#readme",
   "engines": {

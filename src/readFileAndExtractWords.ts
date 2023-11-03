@@ -1,18 +1,26 @@
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from 'fs';
+import * as path from 'path';
 
-import { transformWordsToFiveCharacters, encryptWords, decryptWords, separateWords } from "./nitroEncryption";
+import {
+  transformWordsToFiveCharacters,
+  encryptWords,
+  decryptWords,
+  separateWords,
+} from './nitroEncryption';
 
-async function readFileAndExtractWords(filePath: string,userPassword: string): Promise<string[]> {
+async function readFileAndExtractWords(
+  filePath: string,
+  userPassword: string
+): Promise<string[]> {
   try {
-    const content = await fs.promises.readFile(filePath, "utf-8");
+    const content = await fs.promises.readFile(filePath, 'utf-8');
     const words = content
       .split(/\s+/)
       .filter((word) => word.match(/^[a-zA-Z]+$/));
 
     const transformedWords: string[] = transformWordsToFiveCharacters(words);
 
-    const concatenatedWords: string = transformedWords.join("");
+    const concatenatedWords: string = transformedWords.join('');
     const encryptedData: string = encryptWords(concatenatedWords, userPassword);
     const decryptedData: string = decryptWords(encryptedData, userPassword);
     const wordLength = 5;
@@ -24,4 +32,4 @@ async function readFileAndExtractWords(filePath: string,userPassword: string): P
   }
 }
 
-export {readFileAndExtractWords}
+export { readFileAndExtractWords };
